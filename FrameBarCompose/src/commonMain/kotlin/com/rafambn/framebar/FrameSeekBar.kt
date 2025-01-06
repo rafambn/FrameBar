@@ -26,7 +26,7 @@ import kotlin.math.floor
 import kotlin.math.max
 
 @Composable
-fun FrameSeekBar(
+fun FrameBar(
     modifier: Modifier = Modifier,
     pointerSelection: PointerSelection = PointerSelection.CENTER,
     coercedPointer: CoercePointer = CoercePointer.NOT_COERCED,
@@ -58,7 +58,7 @@ fun FrameSeekBar(
 }
 
 @Composable
-fun FrameSeekBar(
+fun FrameBar(
     modifier: Modifier = Modifier,
     pointerSelection: PointerSelection = PointerSelection.CENTER,
     pointer: Marker,

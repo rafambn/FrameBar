@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,27 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
-import com.rafambn.framebar.FrameSeekBar
+import com.rafambn.framebar.FrameBar
 import com.rafambn.framebar.Marker
 import com.rafambn.framebar.enums.CoercePointer
 import com.rafambn.framebar.enums.PointerSelection
-import com.rafambn.framebar.imageBitmapResource
 import com.rafambn.framebarcomposeapp.theme.AppTheme
-import kotlinx.coroutines.delay
 
 @Composable
 internal fun App() = AppTheme {
     Surface(modifier = Modifier.fillMaxSize()) {
 
         val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
-
-        LaunchedEffect(true) {
-            delay(2000L)
-            println("teste")
-            imageBitmapResource("test.png", false) {
-                imageBitmap.value = it
-            }
-        }
 
         val markers = remember(imageBitmap.value) {
             mutableStateListOf(
@@ -60,7 +49,7 @@ internal fun App() = AppTheme {
         }
         val valor = remember { mutableStateOf(0F) }
         Box {
-            FrameSeekBar(
+            FrameBar(
                 modifier = Modifier.align(Alignment.Center),
                 pointerSelection = PointerSelection.LEFT,
                 coercedPointer = CoercePointer.NOT_COERCED,
@@ -76,5 +65,3 @@ internal fun App() = AppTheme {
         }
     }
 }
-
-internal expect fun openUrl(url: String?)
