@@ -1,43 +1,29 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
+    id("convention.publication")
 }
 
-group = "com.rafambn.framebar"
-version = "1.0"
+group = "io.github.rafambn"
+version = "0.1.0"
 
 kotlin {
-    androidTarget {
-        publishLibraryVariants("release")
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
-        }
-    }
+    withSourcesJar(publish = false)
+    jvmToolchain(11)
 
+    androidTarget { publishLibraryVariants("release") }
     jvm()
-
-    js {
-        browser {
-            webpackTask {
-                mainOutputFileName = "FrameSeekBar.js"
-            }
-        }
-        binaries.executable()
-    }
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "FrameSeekBar"
-            isStatic = true
-        }
-    }
+    js { browser() }
+    wasmJs { browser() }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
@@ -54,22 +40,21 @@ kotlin {
 
     }
 
-    //https://kotlinlang.org/docs/native-objc-interop.html#export-of-kdoc-comments-to-generated-objective-c-headers
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        compilations["main"].compilerOptions.options.freeCompilerArgs.add("-Xexport-kdoc")
+        compilations["main"].compileTaskProvider.configure {
+            compilerOptions {
+                freeCompilerArgs.add("-Xexport-kdoc")
+            }
+        }
     }
 
 }
 
 android {
-    namespace = "io.github.rafambn.frameseekbar"
-    compileSdk = 34
+    namespace = "io.github.rafambn"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }

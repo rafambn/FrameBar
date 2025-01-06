@@ -1,11 +1,11 @@
 [versions]
 
-kotlin = "1.9.21"
-compose = "1.5.11"
-agp = "8.2.0"
-androidx-appcompat = "1.6.1"
-androidx-activityCompose = "1.8.1"
-compose-uitooling = "1.5.4"
+kotlin = "2.1.0"
+compose = "1.7.3"
+agp = "8.7.3"
+androidx-appcompat = "1.7.0"
+androidx-activityCompose = "1.9.3"
+compose-uitooling = "1.7.6"
 
 [libraries]
 
@@ -19,3 +19,5 @@ multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotl
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
