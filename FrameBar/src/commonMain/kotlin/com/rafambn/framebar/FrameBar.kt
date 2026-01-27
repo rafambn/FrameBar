@@ -70,11 +70,6 @@ fun FrameBar(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
-    val onIndexChangeState = rememberUpdatedState<(Float) -> Unit> {
-        if (it != index.toFloat()) {
-            onIndexChange(it.toInt())
-        }
-    }
     FrameBarBase(
         modifier = modifier,
         movement = Movement.DISCRETE,
@@ -83,7 +78,10 @@ fun FrameBar(
         pointer = pointer,
         markers = markers,
         value = index.toFloat(),
-        onValueChange = onIndexChangeState.value,
+        onValueChange = { newValue ->
+            val newIndex = newValue.toInt()
+            if (newIndex != index) onIndexChange(newIndex)
+        },
         onDragStarted = onDragStarted,
         onDragStopped = onDragStopped,
         enabled = enabled,
