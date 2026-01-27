@@ -25,6 +25,22 @@ import com.rafambn.framebar.enums.PointerSelection
 import kotlin.math.floor
 import kotlin.math.max
 
+/**
+ * Continuous FrameBar that maps a draggable pointer across the marker track and reports a float value.
+ *
+ * @param modifier Modifier for sizing, positioning, and interaction decorations.
+ * @param pointerSelection Alignment of the pointer relative to the track (left, center, right).
+ * @param coercedPointer Whether pointer width is considered in the draggable range.
+ * @param pointer Marker used as the draggable pointer visuals.
+ * @param markers List of markers that compose the track visuals.
+ * @param value Current value of the bar.
+ * @param valueRange Optional range for the value mapping; when set, value is mapped to track width.
+ * @param onValueChange Called when the value changes during drag.
+ * @param onDragStarted Called when the drag gesture starts.
+ * @param onDragStopped Called when the drag gesture ends.
+ * @param enabled Whether dragging is enabled.
+ * @param interactionSource Optional interaction source for drag/press states.
+ */
 @Composable
 fun FrameBar(
     modifier: Modifier = Modifier,
@@ -57,6 +73,20 @@ fun FrameBar(
     )
 }
 
+/**
+ * Discrete FrameBar that snaps the pointer to marker positions and reports the selected index.
+ *
+ * @param modifier Modifier for sizing, positioning, and interaction decorations.
+ * @param pointerSelection Alignment of the pointer relative to the track (left, center, right).
+ * @param pointer Marker used as the draggable pointer visuals.
+ * @param markers List of markers that compose the track visuals.
+ * @param index Currently selected marker index.
+ * @param onIndexChange Called when the selected index changes during drag.
+ * @param onDragStarted Called when the drag gesture starts.
+ * @param onDragStopped Called when the drag gesture ends.
+ * @param enabled Whether dragging is enabled.
+ * @param interactionSource Optional interaction source for drag/press states.
+ */
 @Composable
 fun FrameBar(
     modifier: Modifier = Modifier,
