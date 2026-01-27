@@ -41,6 +41,18 @@ kotlin {
             implementation(kotlin("test"))
         }
 
+        val webMain by creating {
+            dependsOn(commonMain.get())
+        }
+
+        wasmJsMain.get().dependsOn(webMain)
+        jsMain.get().apply {
+            dependsOn(webMain)
+            dependencies {
+                implementation(compose.html.core)
+            }
+        }
+
         androidMain.dependencies {
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.activityCompose)
@@ -50,10 +62,6 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.common)
             implementation(compose.desktop.currentOs)
-        }
-
-        jsMain.dependencies {
-            implementation(compose.html.core)
         }
 
         iosMain.dependencies {
