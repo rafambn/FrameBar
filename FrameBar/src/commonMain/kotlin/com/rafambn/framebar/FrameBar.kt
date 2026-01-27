@@ -40,7 +40,7 @@ fun FrameBar(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
-    FrameSeekBarBase(
+    FrameBarBase(
         modifier = modifier,
         movement = Movement.CONTINUOUS,
         pointerSelection = pointerSelection,
@@ -75,7 +75,7 @@ fun FrameBar(
             onIndexChange(it.toInt())
         }
     }
-    FrameSeekBarBase(
+    FrameBarBase(
         modifier = modifier,
         movement = Movement.DISCRETE,
         pointerSelection = pointerSelection,
@@ -92,7 +92,7 @@ fun FrameBar(
 }
 
 @Composable
-private fun FrameSeekBarBase(
+private fun FrameBarBase(
     modifier: Modifier = Modifier,
     movement: Movement = Movement.CONTINUOUS,
     pointerSelection: PointerSelection = PointerSelection.CENTER,
@@ -108,7 +108,7 @@ private fun FrameSeekBarBase(
     interactionSource: MutableInteractionSource? = null
 ) {
     val density = LocalDensity.current
-    val mOffsets = remember(markers.toList()) {
+    val offsets = remember(markers.toList()) {
         mutableListOf<Float>().apply {
             clear()
             var tempOffset = 0F
@@ -154,7 +154,7 @@ private fun FrameSeekBarBase(
             val newValue = if (movement == Movement.CONTINUOUS)
                 coercedValue
             else
-                findIndexTroughOffset(coercedValue, mOffsets)
+                findIndexTroughOffset(coercedValue, offsets)
 
             onValueChangeState.value.invoke(newValue)
             rawOffset.floatValue = coercedValue
@@ -244,12 +244,12 @@ private fun FrameSeekBarBase(
     }
 }
 
-fun findIndexTroughOffset(offset: Float, listOffset: List<Float>): Float {
+private fun findIndexTroughOffset(offset: Float, listOffset: List<Float>): Float {
     val index = listOffset.indexOfLast { offset >= it }
     return if (index != -1) index.toFloat() else 0F
 }
 
-fun findOffsetTroughIndex(selectedIndex: Float, markers: List<Marker>): Float {
+private fun findOffsetTroughIndex(selectedIndex: Float, markers: List<Marker>): Float {
     var starOffset = 0F
     markers.forEachIndexed { index, marker ->
         if (selectedIndex == index.toFloat()) {
@@ -260,7 +260,7 @@ fun findOffsetTroughIndex(selectedIndex: Float, markers: List<Marker>): Float {
     return starOffset
 }
 
-fun pointerSelectionShift(pointerSelection: PointerSelection, halfPointerWidth: Int, pointerWidth: Int): Int {
+private fun pointerSelectionShift(pointerSelection: PointerSelection, halfPointerWidth: Int, pointerWidth: Int): Int {
     return when (pointerSelection) {
         PointerSelection.LEFT -> 0
         PointerSelection.CENTER -> halfPointerWidth
@@ -268,7 +268,7 @@ fun pointerSelectionShift(pointerSelection: PointerSelection, halfPointerWidth: 
     }
 }
 
-fun convertRange(
+private fun convertRange(
     value: Float,
     originalRange: ClosedFloatingPointRange<Float>,
     targetRange: ClosedFloatingPointRange<Float>
