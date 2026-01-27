@@ -1,8 +1,6 @@
 rootProject.name = "FrameBar"
-include(":FrameBarComposeApp")
-include(":FrameBarXMLApp")
-include(":FrameBarCompose")
-include(":FrameBarXML")
+include(":composeApp")
+include(":FrameBar")
 
 pluginManagement {
     repositories {
