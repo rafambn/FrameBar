@@ -1,5 +1,9 @@
 # FrameBar
 
+<div align="center">
+  <img src="framebar_logo.svg" alt="FrameBar Logo" width="200"/>
+</div>
+
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-blue.svg)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-7E52F0.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
 [![Maven Central](https://img.shields.io/maven-central/v/com.rafambn/framebar)](https://search.maven.org/search?q=g:com.rafambn%20AND%20a:framebar)
