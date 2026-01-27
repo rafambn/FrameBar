@@ -72,11 +72,11 @@ kotlin {
 
 android {
     namespace = "com.rafambn.framebarcomposeapp"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
 
         applicationId = "com.rafambn.framebar"
         versionCode = 1

@@ -35,8 +35,8 @@ fun FrameBar(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>? = null,
     onValueChange: (Float) -> Unit,
-    onValueChangeStarted: (() -> Unit)? = null,
-    onValueChangeFinished: (() -> Unit)? = null,
+    onDragStarted: (() -> Unit)? = null,
+    onDragStopped: (() -> Unit)? = null,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
@@ -49,8 +49,8 @@ fun FrameBar(
         markers = markers,
         value = value,
         onValueChange = onValueChange,
-        onValueChangeStarted = onValueChangeStarted,
-        onValueChangeFinished = onValueChangeFinished,
+        onDragStarted = onDragStarted,
+        onDragStopped = onDragStopped,
         valueRange = valueRange,
         enabled = enabled,
         interactionSource = interactionSource,
@@ -65,8 +65,8 @@ fun FrameBar(
     markers: List<Marker>,
     index: Int,
     onIndexChange: (Int) -> Unit,
-    onIndexChangeStarted: (() -> Unit)? = null,
-    onIndexChangeFinished: (() -> Unit)? = null,
+    onDragStarted: (() -> Unit)? = null,
+    onDragStopped: (() -> Unit)? = null,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
@@ -75,7 +75,6 @@ fun FrameBar(
             onIndexChange(it.toInt())
         }
     }
-
     FrameSeekBarBase(
         modifier = modifier,
         movement = Movement.DISCRETE,
@@ -85,8 +84,8 @@ fun FrameBar(
         markers = markers,
         value = index.toFloat(),
         onValueChange = onIndexChangeState.value,
-        onValueChangeStarted = onIndexChangeStarted,
-        onValueChangeFinished = onIndexChangeFinished,
+        onDragStarted = onDragStarted,
+        onDragStopped = onDragStopped,
         enabled = enabled,
         interactionSource = interactionSource,
     )
@@ -102,8 +101,8 @@ private fun FrameSeekBarBase(
     markers: List<Marker>,
     value: Float,
     onValueChange: (Float) -> Unit,
-    onValueChangeStarted: (() -> Unit)? = null,
-    onValueChangeFinished: (() -> Unit)? = null,
+    onDragStarted: (() -> Unit)? = null,
+    onDragStopped: (() -> Unit)? = null,
     valueRange: ClosedFloatingPointRange<Float>? = null,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
@@ -183,10 +182,10 @@ private fun FrameSeekBarBase(
                     orientation = Orientation.Horizontal,
                     state = draggableState,
                     onDragStarted = {
-                        onValueChangeStarted?.invoke()
+                        onDragStarted?.invoke()
                     },
                     onDragStopped = {
-                        onValueChangeFinished?.invoke()
+                        onDragStopped?.invoke()
                     })
                 else modifier1
             }
