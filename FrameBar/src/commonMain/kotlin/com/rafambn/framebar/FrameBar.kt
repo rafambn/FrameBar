@@ -8,10 +8,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.Layout
@@ -49,14 +52,14 @@ fun FrameBar(
     pointer: Marker,
     markers: List<Marker>,
     value: Float,
-    valueRange: ClosedFloatingPointRange<Float>? = null,
+    valueRange: ClosedFloatingPointRange<Float> = 0F..1F,
     onValueChange: (Float) -> Unit,
     onDragStarted: (() -> Unit)? = null,
     onDragStopped: (() -> Unit)? = null,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
-    FrameBarBase(
+    FrameBarImpl(
         modifier = modifier,
         movement = Movement.CONTINUOUS,
         pointerSelection = pointerSelection,
@@ -100,7 +103,7 @@ fun FrameBar(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
-    FrameBarBase(
+    FrameBarImpl(
         modifier = modifier,
         movement = Movement.DISCRETE,
         pointerSelection = pointerSelection,
@@ -109,18 +112,18 @@ fun FrameBar(
         markers = markers,
         value = index.toFloat(),
         onValueChange = { newValue ->
-            val newIndex = newValue.toInt()
-            if (newIndex != index) onIndexChange(newIndex)
+            onIndexChange(newValue.toInt())
         },
         onDragStarted = onDragStarted,
         onDragStopped = onDragStopped,
         enabled = enabled,
         interactionSource = interactionSource,
+        valueRange = 0F..markers.size.toFloat()
     )
 }
 
 @Composable
-private fun FrameBarBase(
+private fun FrameBarImpl(
     modifier: Modifier = Modifier,
     movement: Movement = Movement.CONTINUOUS,
     pointerSelection: PointerSelection = PointerSelection.CENTER,
@@ -131,61 +134,51 @@ private fun FrameBarBase(
     onValueChange: (Float) -> Unit,
     onDragStarted: (() -> Unit)? = null,
     onDragStopped: (() -> Unit)? = null,
-    valueRange: ClosedFloatingPointRange<Float>? = null,
+    valueRange: ClosedFloatingPointRange<Float> = 0F..1F,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
     val density = LocalDensity.current
-    val offsets = remember(markers.toList()) {
+    val valueState by rememberUpdatedState(value.coerceIn(valueRange))
+
+    val offsets = remember(markers.toList(), density) {
         mutableListOf<Float>().apply {
             clear()
             var tempOffset = 0F
             markers.forEach {
                 add(tempOffset)
-                tempOffset += with(density) { it.width.toPx() }
+                tempOffset += with(density) { it.size.width.toPx() }
             }
-        }
+        }.toList()
     }
 
-    val pointerWidthPx = remember(pointer.hashCode()) { with(density) { pointer.width.toPx() } }
+    val pointerWidthPx = remember(pointer.hashCode()) { with(density) { pointer.size.width.toPx() } }
     val trackWidthPx = remember(markers.toList()) {
-        with(density) { markers.sumOf { it.width.value.toInt() }.dp.toPx() } -
-                if (coercedPointer == CoercePointer.COERCED)
-                    pointerWidthPx
-                else
-                    0F
+        with(density) {
+            markers.sumOf { it.size.width.toPx().toInt() }
+        } - if (coercedPointer == CoercePointer.COERCED) pointerWidthPx else 0F
     }
 
-    val rawOffset = remember {
-        mutableFloatStateOf(with(density) {
-            if (movement == Movement.CONTINUOUS)
-                if (valueRange == null)
-                    value.coerceIn(0F, trackWidthPx)
-                else
-                    convertRange(value.coerceIn(valueRange.start, valueRange.endInclusive), valueRange, 0F..trackWidthPx)
-            else
-                findOffsetTroughIndex(value, markers).dp.toPx()
-        })
-    }
-    val onValueChangeState = rememberUpdatedState<(Float) -> Unit> {
-        if (it != value) {
-            if (valueRange == null)
-                onValueChange(it)
-            else
-                onValueChange(convertRange(it, 0F..trackWidthPx, valueRange))
-        }
-    }
+    var acumulatedDelta by remember { mutableFloatStateOf(0f) }
 
     val draggableState = remember(markers.toList()) {
         DraggableState { delta ->
-            val coercedValue = (rawOffset.floatValue - delta).coerceIn(0f, trackWidthPx)
-            val newValue = if (movement == Movement.CONTINUOUS)
-                coercedValue
-            else
-                findIndexTroughOffset(coercedValue, offsets)
+            when (movement) {
+                Movement.DISCRETE -> {
+                    acumulatedDelta += delta
+                    val offset = findOffsetTroughIndex(valueState, markers)
+                    val index = findIndexTroughOffset(offset - acumulatedDelta, offsets)
+                    val newIndex = index.coerceIn(valueRange)
+                    if (newIndex != valueState) {
+                        onValueChange(newIndex)
+                        acumulatedDelta = 0f
+                    }
+                }
 
-            onValueChangeState.value.invoke(newValue)
-            rawOffset.floatValue = coercedValue
+                Movement.CONTINUOUS -> onValueChange(
+                    valueState - convertRange(delta, 0F..trackWidthPx, valueRange)
+                )
+            }
         }
     }
 
@@ -197,10 +190,10 @@ private fun FrameBarBase(
         modifier = modifier
             .wrapContentSize()
             .requiredSizeIn(
-                minWidth = markers.sumOf { it.width.value.toInt() }.dp,
+                minWidth = markers.sumOf { it.size.width.value.toInt() }.dp,
                 minHeight = maxOf(
-                    markers.maxOf { it.height + it.topOffset },
-                    pointer.height + pointer.topOffset
+                    markers.maxOf { it.size.height + it.topOffset },
+                    pointer.size.height + pointer.topOffset
                 )
             )
             .clipToBounds()
@@ -253,10 +246,11 @@ private fun FrameBarBase(
             //It ensures that the movement is limited to the maximum width of the markers. If the pointer is in a coerced state, the width of the pointer is subtracted
             // from the total movement.
             val coercedValue = if (movement == Movement.CONTINUOUS) {
-                if (valueRange == null)
-                    value.coerceIn(0F, trackWidthPx).toInt()
-                else
-                    convertRange(value.coerceIn(valueRange.start, valueRange.endInclusive), valueRange, 0F..trackWidthPx).toInt()
+                convertRange(
+                    value.coerceIn(valueRange.start, valueRange.endInclusive),
+                    valueRange,
+                    0F..trackWidthPx
+                ).toInt()
             } else
                 findOffsetTroughIndex(value, markers).dp.toPx().toInt()
 
@@ -281,9 +275,9 @@ private fun findOffsetTroughIndex(selectedIndex: Float, markers: List<Marker>): 
     var starOffset = 0F
     markers.forEachIndexed { index, marker ->
         if (selectedIndex == index.toFloat()) {
-            starOffset += marker.width.value / 2
+            starOffset += marker.size.width.value / 2
             return starOffset
-        } else starOffset += marker.width.value
+        } else starOffset += marker.size.width.value
     }
     return starOffset
 }

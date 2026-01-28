@@ -2,6 +2,7 @@ package com.rafambn.framebarcomposeapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,15 +10,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
@@ -44,7 +49,7 @@ internal fun App() = AppTheme {
 
             // 1. Pointer Selection - LEFT
             DemoSection(title = "1. Pointer Selection - LEFT") {
-                val value = remember { mutableStateOf(0F) }
+                var value by remember { mutableStateOf(0F) }
                 val colors = listOf(
                     Color(0xFFD32F2F), Color(0xFFC62828), Color(0xFFB71C1C),
                     Color(0xFFF57C00), Color(0xFFE65100), Color(0xFFFF6F00),
@@ -52,7 +57,7 @@ internal fun App() = AppTheme {
                     Color(0xFF388E3C), Color(0xFF1B5E20), Color(0xFF2E7D32)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 32.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -62,12 +67,12 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.LEFT,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFF0D47A1)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFF0D47A1)),
                     markers = markers,
-                    value = value.value,
-                    onValueChange = { value.value = it }
+                    value = value,
+                    onValueChange = { value = it }
                 )
-                Text("Value: ${((value.value * 10).roundToInt() / 10f)}", modifier = Modifier.padding(top = 8.dp))
+                Text("Value: ${((value * 10).roundToInt() / 10f)}", modifier = Modifier.padding(top = 8.dp))
             }
 
             // 2. Pointer Selection - CENTER
@@ -80,7 +85,7 @@ internal fun App() = AppTheme {
                     Color(0xFF009688), Color(0xFF26A69A), Color(0xFF4DB6AC)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 32.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -90,7 +95,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFF00BFA5)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFF00BFA5)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it }
@@ -108,7 +113,7 @@ internal fun App() = AppTheme {
                     Color(0xFF880E4F), Color(0xFFC2185B), Color(0xFFEC407A)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 32.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -118,7 +123,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.RIGHT,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFF1A237E)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFF1A237E)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it }
@@ -138,7 +143,11 @@ internal fun App() = AppTheme {
                 val markers = colors.mapIndexed { index, color ->
                     val heights = listOf(20.dp, 30.dp, 20.dp, 25.dp, 15.dp, 35.dp, 22.dp, 28.dp, 18.dp, 32.dp)
                     val offsets = listOf(10.dp, 0.dp, 10.dp, 5.dp, 15.dp, 0.dp, 12.dp, 2.dp, 14.dp, 0.dp)
-                    Marker(width = 35.dp, height = heights[index % heights.size], topOffset = offsets[index % offsets.size], color = color)
+                    Marker(
+                        size = DpSize(35.dp, heights[index % heights.size]),
+                        topOffset = offsets[index % offsets.size],
+                        color = color
+                    )
                 }
 
                 FrameBar(
@@ -148,7 +157,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFF00E5FF)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFF00E5FF)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it }
@@ -166,7 +175,7 @@ internal fun App() = AppTheme {
                     Color(0xFFFFB300), Color(0xFFFDD835), Color(0xFFFFEC00)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 32.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -176,7 +185,7 @@ internal fun App() = AppTheme {
                         .background(Color.Gray),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.COERCED,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFFFFD600)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFFFFD600)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it }
@@ -195,7 +204,7 @@ internal fun App() = AppTheme {
                     Color(0xFF4A148C)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 28.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -205,7 +214,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, height = 60.dp, color = Color(0xFF00BFA5)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFF00BFA5)),
                     markers = markers,
                     value = value.value,
                     valueRange = 0F..100F,
@@ -217,7 +226,18 @@ internal fun App() = AppTheme {
             // 7. Discrete Mode (Index-based)
             DemoSection(title = "7. Discrete Mode - Index Based Selection") {
                 val index = remember { mutableStateOf(0) }
-                val frameNames = listOf("Frame 1", "Frame 2", "Frame 3", "Frame 4", "Frame 5", "Frame 6", "Frame 7", "Frame 8", "Frame 9", "Frame 10")
+                val frameNames = listOf(
+                    "Frame 1",
+                    "Frame 2",
+                    "Frame 3",
+                    "Frame 4",
+                    "Frame 5",
+                    "Frame 6",
+                    "Frame 7",
+                    "Frame 8",
+                    "Frame 9",
+                    "Frame 10"
+                )
                 val colors = listOf(
                     Color(0xFF00BCD4), Color(0xFF0097A7), Color(0xFF006064),
                     Color(0xFF00ACC1), Color(0xFF0288D1), Color(0xFF0277BD),
@@ -225,7 +245,7 @@ internal fun App() = AppTheme {
                     Color(0xFF0D47A1)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 32.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -234,13 +254,15 @@ internal fun App() = AppTheme {
                         .background(Color.Gray)
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFFFFD600)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFFFFD600)),
                     markers = markers,
                     index = index.value,
                     onIndexChange = { index.value = it }
                 )
-                Text("Selected: ${frameNames[index.value]} (Index: ${index.value})",
-                    modifier = Modifier.padding(top = 8.dp))
+                Text(
+                    "Selected: ${frameNames[index.value]} (Index: ${index.value})",
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
             // 8. Drag Callbacks
@@ -256,7 +278,7 @@ internal fun App() = AppTheme {
                     Color(0xFFE3F2FD)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 28.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -266,7 +288,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, height = 60.dp, color = Color(0xFFFFD600)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFFFFD600)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it },
@@ -295,7 +317,7 @@ internal fun App() = AppTheme {
                     Color(0xFFA1A1A1)
                 )
                 val markers = colors.map { color ->
-                    Marker(width = 32.dp, color = color)
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
                 }
 
                 FrameBar(
@@ -305,14 +327,16 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 12.dp, topOffset = 30.dp, height = 60.dp, color = Color(0xFF424242)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFF424242)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it },
                     enabled = false
                 )
-                Text("Value: ${((value.value * 10).roundToInt() / 10f)} (Disabled - not interactive)",
-                    modifier = Modifier.padding(top = 8.dp))
+                Text(
+                    "Value: ${((value.value * 10).roundToInt() / 10f)} (Disabled - not interactive)",
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
             // 10. Mixed Visual Styles
@@ -326,9 +350,45 @@ internal fun App() = AppTheme {
                     Color(0xFF4CAF50), Color(0xFF66BB6A), Color(0xFF2E7D32)
                 )
                 val markers = colors.mapIndexed { index, color ->
-                    val heights = listOf(15.dp, 40.dp, 25.dp, 30.dp, 22.dp, 40.dp, 25.dp, 35.dp, 20.dp, 38.dp, 28.dp, 33.dp, 18.dp, 42.dp, 26.dp)
-                    val offsets = listOf(15.dp, 0.dp, 10.dp, 5.dp, 12.dp, 0.dp, 10.dp, 2.dp, 15.dp, 1.dp, 8.dp, 3.dp, 14.dp, 0.dp, 9.dp)
-                    Marker(width = 30.dp, height = heights[index % heights.size], topOffset = offsets[index % offsets.size], color = color)
+                    val heights = listOf(
+                        15.dp,
+                        40.dp,
+                        25.dp,
+                        30.dp,
+                        22.dp,
+                        40.dp,
+                        25.dp,
+                        35.dp,
+                        20.dp,
+                        38.dp,
+                        28.dp,
+                        33.dp,
+                        18.dp,
+                        42.dp,
+                        26.dp
+                    )
+                    val offsets = listOf(
+                        15.dp,
+                        0.dp,
+                        10.dp,
+                        5.dp,
+                        12.dp,
+                        0.dp,
+                        10.dp,
+                        2.dp,
+                        15.dp,
+                        1.dp,
+                        8.dp,
+                        3.dp,
+                        14.dp,
+                        0.dp,
+                        9.dp
+                    )
+                    Marker(
+                        size = DpSize(30.dp, heights[index % heights.size]),
+                        topOffset = offsets[index % offsets.size],
+                        color = color
+                    )
                 }
 
                 FrameBar(
@@ -338,7 +398,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(width = 30.dp, height = 65.dp, color = Color(0xFF00E5FF)),
+                    pointer = Marker(size = DpSize(30.dp, 65.dp), topOffset = 0.dp, color = Color(0xFF00E5FF)),
                     markers = markers,
                     value = value.value,
                     onValueChange = { value.value = it }
@@ -346,6 +406,63 @@ internal fun App() = AppTheme {
                 Text("Value: ${((value.value * 10).roundToInt() / 10f)}", modifier = Modifier.padding(top = 8.dp))
             }
 
+            DemoSection(title = "11 - Set values") {
+                val value = remember { mutableStateOf(0F) }
+                val colors = listOf(
+                    Color(0xFFFF5252), Color(0xFFFF6E40), Color(0xFFFFAB40),
+                    Color(0xFFFDD835), Color(0xFFCDDC39), Color(0xFF9CCC65),
+                    Color(0xFF66BB6A), Color(0xFF4CAF50), Color(0xFF00C853)
+                )
+                val markers = colors.map { color ->
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
+                }
+
+                FrameBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Gray)
+                        .padding(horizontal = 16.dp),
+                    pointerSelection = PointerSelection.CENTER,
+                    coercedPointer = CoercePointer.NOT_COERCED,
+                    pointer = Marker(size = DpSize(16.dp, 50.dp), topOffset = 25.dp, color = Color(0xFF2196F3)),
+                    markers = markers,
+                    value = value.value,
+                    valueRange = 0F..100F,
+                    onValueChange = { value.value = it }
+                )
+
+                Text(
+                    "Value: ${((value.value * 10).roundToInt() / 10f)} / 100",
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                Row(modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
+                    Button(
+                        onClick = { value.value = 0F },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 4.dp)
+                    ) {
+                        Text("Reset (0)")
+                    }
+                    Button(
+                        onClick = { value.value = 50F },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 4.dp)
+                    ) {
+                        Text("Mid (50)")
+                    }
+                    Button(
+                        onClick = { value.value = 100F },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 4.dp)
+                    ) {
+                        Text("End (100)")
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
@@ -359,7 +476,7 @@ private fun DemoSection(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-                        .background(Color.Gray)
+            .background(Color.Gray)
             .padding(bottom = 16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.DarkGray

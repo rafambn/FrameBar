@@ -17,21 +17,20 @@ import androidx.compose.ui.unit.IntSize
 fun Pointer(
     modifier: Modifier = Modifier,
     pointer: Marker = Marker(
-        width = 5.dp,
-        height = 40.dp,
+        size = DpSize(5.dp, 40.dp),
         topOffset = 0.dp,
         color = Color.Yellow
     )
 ) {
     Spacer(
         modifier
-            .size(pointer.width, pointer.height + pointer.topOffset)
+            .size(pointer.size.width, pointer.size.height + pointer.topOffset)
             .drawBehind {
                 pointer.bitmap?.let { bitmap ->
                     drawImage(
                         image = bitmap,
                         dstOffset = IntOffset(0, pointer.topOffset.toPx().toInt()),
-                        dstSize = IntSize(pointer.width.toPx().toInt(), pointer.height.toPx().toInt()) //TODO lots of conversion search way to improve
+                        dstSize = IntSize(pointer.size.width.toPx().toInt(), pointer.size.height.toPx().toInt()) //TODO lots of conversion search way to improve
                     )
                 } ?: run {
                     drawRect(
@@ -40,7 +39,7 @@ fun Pointer(
                             0F,
                             pointer.topOffset.toPx()
                         ),
-                        size = DpSize(pointer.width, pointer.height).toSize()
+                        size = DpSize(pointer.size.width, pointer.size.height).toSize()
                     )
                 }
             }
@@ -57,13 +56,13 @@ fun Markers(
     var tempOffset: Dp = 0.dp
     markersList.forEach {
         mOffsets.add(tempOffset)
-        tempOffset += it.width
+        tempOffset += it.size.width
     }
     Spacer(
         modifier
             .size(
-                markersList.sumOf { it.width.value.toInt() }.dp,
-                markersList.maxOf { it.height + it.topOffset }
+                markersList.sumOf { it.size.width.value.toInt() }.dp,
+                markersList.maxOf { it.size.height + it.topOffset }
             )
             .drawBehind {
                 markersList.forEachIndexed { index, marker ->
@@ -71,13 +70,13 @@ fun Markers(
                         drawImage(
                             image = bitmap,
                             dstOffset = IntOffset(mOffsets[index].toPx().toInt(), marker.topOffset.toPx().toInt()), //TODO lots of conversion search way to improve
-                            dstSize = IntSize(marker.width.toPx().toInt(), marker.height.toPx().toInt())
+                            dstSize = IntSize(marker.size.width.toPx().toInt(), marker.size.height.toPx().toInt())
                         )
                     } ?: run {
                         drawRect(
                             color = marker.color,
                             topLeft = Offset(mOffsets[index].toPx(), marker.topOffset.toPx()),
-                            size = DpSize(marker.width, marker.height).toSize()
+                            size = DpSize(marker.size.width, marker.size.height).toSize()
                         )
                     }
                 }
