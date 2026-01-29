@@ -118,7 +118,7 @@ fun FrameBar(
         onDragStopped = onDragStopped,
         enabled = enabled,
         interactionSource = interactionSource,
-        valueRange = 0F..markers.size.toFloat()
+        valueRange = 0F..(markers.size.toFloat() - 1F)
     )
 }
 
@@ -138,6 +138,7 @@ private fun FrameBarImpl(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null
 ) {
+    require(markers.isNotEmpty()) { "There should be at least one marker" }
     val density = LocalDensity.current
     val valueState by rememberUpdatedState(value.coerceIn(valueRange))
 
