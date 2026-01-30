@@ -24,6 +24,7 @@ import com.rafambn.framebar.enums.Movement
 import com.rafambn.framebar.enums.PointerSelection
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * Continuous FrameBar that maps a draggable pointer across the marker track and reports a float value.
@@ -109,7 +110,7 @@ fun FrameBar(
         markers = markers,
         value = index.toFloat(),
         onValueChange = { newValue ->
-            onIndexChange(newValue.toInt())
+            onIndexChange(newValue.roundToInt())
         },
         onDragStarted = onDragStarted,
         onDragStopped = onDragStopped,
@@ -279,9 +280,10 @@ private fun findIndexThroughOffset(offset: Float, listOffset: List<Float>): Floa
 }
 
 private fun findOffsetThroughIndex(selectedIndex: Float, markers: List<Marker>): Float {
+    val targetIndex = selectedIndex.roundToInt()
     var startOffset = 0F
     markers.forEachIndexed { index, marker ->
-        if (selectedIndex == index.toFloat()) {
+        if (targetIndex == index) {
             startOffset += marker.size.width.value / 2
             return startOffset
         } else
