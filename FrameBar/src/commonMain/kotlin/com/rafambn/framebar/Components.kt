@@ -8,43 +8,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 
 @Composable
-fun Pointer(
+internal fun Pointer(
     modifier: Modifier = Modifier,
-    pointer: Marker = Marker(
-        size = DpSize(5.dp, 40.dp),
-        topOffset = 0.dp,
-        color = Color.Yellow
-    )
+    pointer: Marker
 ) {
-    val density = LocalDensity.current
-    val topOffsetPx = remember(pointer.topOffset, density) { with(density) { pointer.topOffset.toPx() } }
-    val widthPx = remember(pointer.size.width, density) { with(density) { pointer.size.width.toPx() } }
-    val heightPx = remember(pointer.size.height, density) { with(density) { pointer.size.height.toPx() } }
-
     Spacer(
         modifier
-            .size(pointer.size.width, pointer.size.height + pointer.topOffset)
+            .size(pointer.size)
             .drawBehind {
                 pointer.bitmap?.let { bitmap ->
-                    drawImage(
-                        image = bitmap,
-                        dstOffset = IntOffset(0, topOffsetPx.toInt()),
-                        dstSize = IntSize(widthPx.toInt(), heightPx.toInt())
-                    )
+                    drawImage(image = bitmap)
                 } ?: run {
-                    drawRect(
-                        color = pointer.color,
-                        topLeft = Offset(0F, topOffsetPx),
-                        size = Size(widthPx, heightPx)
-                    )
+                    drawRect(color = pointer.color)
                 }
             }
     )
@@ -79,11 +60,13 @@ fun Markers(
     }
 
     val totalWidth = remember(markersList) { markersList.sumOf { it.size.width.value.toDouble() }.dp }
-    val maxHeight = remember(markersList) { markersList.maxOf { it.size.height + it.topOffset } }
+    val minHeight = remember(markersList) {
+        markersList.maxOf { it.size.height + it.topOffset }
+    }
 
     Spacer(
         modifier
-            .size(totalWidth, maxHeight)
+            .size(totalWidth, minHeight)
             .drawBehind {
                 markersList.forEachIndexed { index, marker ->
                     marker.bitmap?.let { bitmap ->

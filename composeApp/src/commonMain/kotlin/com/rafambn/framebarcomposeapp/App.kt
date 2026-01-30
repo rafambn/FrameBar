@@ -313,7 +313,7 @@ internal fun App() = AppTheme {
 
             // 9. Disabled State
             DemoSection(title = "9. Disabled State") {
-                val value = remember { mutableStateOf(50F) }
+                val value = remember { mutableStateOf(0.5F) }
                 val colors = listOf(
                     Color(0xFF757575), Color(0xFF616161), Color(0xFF424242),
                     Color(0xFF212121), Color(0xFF9E9E9E), Color(0xFF808080),

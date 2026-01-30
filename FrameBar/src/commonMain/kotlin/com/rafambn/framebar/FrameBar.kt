@@ -6,8 +6,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.requiredSizeIn
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -154,6 +152,12 @@ private fun FrameBarImpl(
     }
 
     val pointerWidthPx = remember(pointer, density) { with(density) { pointer.size.width.toPx() } }
+    val pointerTopOffsetPx = remember(pointer, density) { with(density) { pointer.topOffset.toPx() } }
+    val markersMaxHeight = remember(markers, density) {
+        with(density) {
+            markers.maxOf { it.size.height.toPx() + it.topOffset.toPx() }
+        }
+    }
     val trackWidthPx = remember(markers, density) {
         with(density) {
             markers.sumOf { it.size.width.toPx().toDouble() }.toFloat()
@@ -179,7 +183,7 @@ private fun FrameBarImpl(
                 }
 
                 Movement.CONTINUOUS -> onValueChange(
-                    valueState - convertRange(delta, 0F..trackWidthPx, valueRange)
+                    (valueState - convertRange(delta, 0F..trackWidthPx, valueRange)).coerceIn(valueRange)
                 )
             }
         }
@@ -191,14 +195,6 @@ private fun FrameBarImpl(
             Box(modifier = Modifier.layoutId(ComponentType.TRACK)) { Markers(markersList = markers) }
         },
         modifier = modifier
-            .wrapContentSize()
-            .requiredSizeIn(
-                minWidth = markers.sumOf { it.size.width.value.toDouble() }.dp,
-                minHeight = maxOf(
-                    markers.maxOf { it.size.height + it.topOffset },
-                    pointer.size.height + pointer.topOffset
-                )
-            )
             .clipToBounds()
             .let { modifier1 ->
                 if (enabled) modifier1.draggable(
@@ -224,15 +220,23 @@ private fun FrameBarImpl(
             it.layoutId == ComponentType.TRACK
         }.measure(constraints)
 
-        //Some variable to improve undestanding
-        val progressBarWidth = markersPlaceable.width
-        val progressBarHeight = max(markersPlaceable.height, pointerPlaceable.height)
+        //Content dimensions based on markers
+        val contentWidth = markersPlaceable.width
+        val contentHeight = max(
+            markersMaxHeight.toInt(),
+            pointerPlaceable.height + pointerTopOffsetPx.toInt()
+        )
+
+        //Layout dimensions respecting constraints
+        val layoutWidth = if (constraints.hasBoundedWidth) constraints.maxWidth else contentWidth
+        val layoutHeight = if (constraints.hasBoundedHeight) constraints.maxHeight else contentHeight
+
         val halfPointerWidth = floor(pointerWidthPx / 2).toInt()
-        val halfProgressBarWidth = progressBarWidth / 2
+        val halfLayoutWidth = layoutWidth / 2
 
         //Variable to define the placement of the pointer with its center align with the center of the layout
-        val pointerOffsetX = halfProgressBarWidth - halfPointerWidth
-        val pointerOffsetY = 0
+        val pointerOffsetX = halfLayoutWidth - halfPointerWidth
+        val pointerOffsetY = pointerTopOffsetPx.toInt()
 
         //This variable determines the placement of the markers. It aligns the left edge of the markers with the left edge of the pointer. Depending on the selection type
         // of the pointer and if the pointer is coerced, it then shifts the markers to the right.
@@ -243,8 +247,8 @@ private fun FrameBarImpl(
         val markersOffsetY = 0
 
         layout(
-            progressBarWidth,
-            progressBarHeight
+            layoutWidth.coerceAtLeast(contentWidth),
+            layoutHeight.coerceAtLeast(contentHeight)
         ) {
             //It ensures that the movement is limited to the maximum width of the markers. If the pointer is in a coerced state, the width of the pointer is subtracted
             // from the total movement.
