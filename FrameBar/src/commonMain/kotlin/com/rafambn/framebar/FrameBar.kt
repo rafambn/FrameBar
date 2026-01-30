@@ -140,6 +140,7 @@ private fun FrameBarImpl(
     require(markers.isNotEmpty()) { "There should be at least one marker" }
     val density = LocalDensity.current
     val valueState by rememberUpdatedState(value.coerceIn(valueRange))
+    val markersState by rememberUpdatedState(markers)
 
     val offsets = remember(markers, density) {
         mutableListOf<Float>().apply {
@@ -152,7 +153,7 @@ private fun FrameBarImpl(
         }.toList()
     }
 
-    val pointerWidthPx = remember(pointer.hashCode()) { with(density) { pointer.size.width.toPx() } }
+    val pointerWidthPx = remember(pointer) { with(density) { pointer.size.width.toPx() } }
     val trackWidthPx = remember(markers) {
         with(density) {
             markers.sumOf { it.size.width.toPx().toInt() }
@@ -161,12 +162,12 @@ private fun FrameBarImpl(
 
     var accumulatedDelta by remember { mutableFloatStateOf(0f) }
 
-    val draggableState = remember(markers) {
+    val draggableState = remember {
         DraggableState { delta ->
             when (movement) {
                 Movement.DISCRETE -> {
                     accumulatedDelta += delta
-                    val offset = findOffsetThroughIndex(valueState, markers)
+                    val offset = findOffsetThroughIndex(valueState, markersState)
                     val index = findIndexThroughOffset(offset - accumulatedDelta, offsets)
                     val newIndex = index.coerceIn(valueRange)
                     if (newIndex != valueState) {

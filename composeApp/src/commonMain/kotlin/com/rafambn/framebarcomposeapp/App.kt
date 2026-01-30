@@ -527,7 +527,7 @@ internal fun App() = AppTheme {
                         .padding(horizontal = 16.dp),
                     pointerSelection = PointerSelection.CENTER,
                     coercedPointer = CoercePointer.NOT_COERCED,
-                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFFFFD600)),
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 50.dp, color = Color(0xFFFFD600)),
                     markers = markers.value,
                     value = value.value,
                     onValueChange = { value.value = it }

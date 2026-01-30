@@ -51,11 +51,10 @@ fun Markers(
     modifier: Modifier = Modifier,
     markersList: List<Marker>
 ) {
-    val mOffsets = mutableListOf<Dp>()
-    mOffsets.clear()
-    var tempOffset: Dp = 0.dp
+    val offsets = mutableListOf<Dp>()
+    var tempOffset = 0.dp
     markersList.forEach {
-        mOffsets.add(tempOffset)
+        offsets.add(tempOffset)
         tempOffset += it.size.width
     }
     Spacer(
@@ -69,13 +68,13 @@ fun Markers(
                     marker.bitmap?.let { bitmap ->
                         drawImage(
                             image = bitmap,
-                            dstOffset = IntOffset(mOffsets[index].toPx().toInt(), marker.topOffset.toPx().toInt()), //TODO lots of conversion search way to improve
+                            dstOffset = IntOffset(offsets[index].toPx().toInt(), marker.topOffset.toPx().toInt()), //TODO lots of conversion search way to improve
                             dstSize = IntSize(marker.size.width.toPx().toInt(), marker.size.height.toPx().toInt())
                         )
                     } ?: run {
                         drawRect(
                             color = marker.color,
-                            topLeft = Offset(mOffsets[index].toPx(), marker.topOffset.toPx()),
+                            topLeft = Offset(offsets[index].toPx(), marker.topOffset.toPx()),
                             size = DpSize(marker.size.width, marker.size.height).toSize()
                         )
                     }

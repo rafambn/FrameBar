@@ -176,15 +176,6 @@ FrameBar(
 )
 ```
 
-## 🏗️ Architecture
-
-FrameBar is built with a clean, modular architecture:
-
-- **FrameSeekBar.kt**: Main component logic and layout calculations
-- **Marker.kt**: Data class for defining markers and pointers
-- **Components.kt**: Visual rendering components
-- **Enums**: Configuration options for behavior
-
 ## 📱 Platform Support
 
 | Platform | Supported |
