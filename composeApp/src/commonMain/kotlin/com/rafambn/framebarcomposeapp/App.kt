@@ -35,6 +35,9 @@ import com.rafambn.framebar.Marker
 import com.rafambn.framebar.enums.CoercePointer
 import com.rafambn.framebar.enums.PointerSelection
 import com.rafambn.framebarcomposeapp.theme.AppTheme
+import framebar.composeapp.generated.resources.Res
+import framebar.composeapp.generated.resources.marker_icon
+import org.jetbrains.compose.resources.imageResource
 
 @Composable
 internal fun App() = AppTheme {
@@ -534,6 +537,29 @@ internal fun App() = AppTheme {
                 )
                 Text("Value: ${((value.value * 10).roundToInt() / 10f)}", modifier = Modifier.padding(top = 8.dp))
                 Text("Animating marker at index: ${animatedMarkerIndex.value}", modifier = Modifier.padding(top = 4.dp))
+            }
+
+            // 13. Image Bitmap Markers
+            DemoSection(title = "13. Image Bitmap Markers") {
+                val value = remember { mutableStateOf(0F) }
+                val markerBitmap = imageResource(Res.drawable.marker_icon)
+                val markers = List(10) {
+                    Marker(size = DpSize(32.dp, 32.dp), topOffset = 4.dp, bitmap = markerBitmap)
+                }
+
+                FrameBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Gray)
+                        .padding(horizontal = 16.dp),
+                    pointerSelection = PointerSelection.CENTER,
+                    coercedPointer = CoercePointer.NOT_COERCED,
+                    pointer = Marker(size = DpSize(12.dp, 40.dp), topOffset = 0.dp, color = Color(0xFFFF5722)),
+                    markers = markers,
+                    value = value.value,
+                    onValueChange = { value.value = it }
+                )
+                Text("Value: ${((value.value * 10).roundToInt() / 10f)}", modifier = Modifier.padding(top = 8.dp))
             }
 
             Spacer(modifier = Modifier.height(32.dp))

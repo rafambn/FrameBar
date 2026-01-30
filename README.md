@@ -9,6 +9,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.rafambn/framebar)](https://search.maven.org/search?q=g:com.rafambn%20AND%20a:framebar)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+**[Live Demo](https://framebar.rafambn.com/)**
+
 A customizable Kotlin Multiplatform seekbar component for Compose Multiplatform applications. Perfect for media players, video editing tools, or any scenario requiring precise position control within a frame-based timeline.
 
 ## ✨ Features
