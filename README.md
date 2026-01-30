@@ -6,7 +6,7 @@
 
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-blue.svg)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-7E52F0.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
-[![Maven Central](https://img.shields.io/maven-central/v/com.rafambn/framebar)](https://search.maven.org/search?q=g:com.rafambn%20AND%20a:framebar)
+[![Maven Central](https://img.shields.io/maven-central/v/com.rafambn/FrameBar)](https://search.maven.org/search?q=g:com.rafambn%20AND%20a:FrameBar)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **[Live Demo](https://framebar.rafambn.com/)**
