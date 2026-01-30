@@ -153,10 +153,10 @@ private fun FrameBarImpl(
         }.toList()
     }
 
-    val pointerWidthPx = remember(pointer) { with(density) { pointer.size.width.toPx() } }
-    val trackWidthPx = remember(markers) {
+    val pointerWidthPx = remember(pointer, density) { with(density) { pointer.size.width.toPx() } }
+    val trackWidthPx = remember(markers, density) {
         with(density) {
-            markers.sumOf { it.size.width.toPx().toInt() }
+            markers.sumOf { it.size.width.toPx().toDouble() }.toFloat()
         } - if (coercedPointer == CoercePointer.COERCED) pointerWidthPx else 0F
     }
 
@@ -193,7 +193,7 @@ private fun FrameBarImpl(
         modifier = modifier
             .wrapContentSize()
             .requiredSizeIn(
-                minWidth = markers.sumOf { it.size.width.value.toInt() }.dp,
+                minWidth = markers.sumOf { it.size.width.value.toDouble() }.dp,
                 minHeight = maxOf(
                     markers.maxOf { it.size.height + it.topOffset },
                     pointer.size.height + pointer.topOffset

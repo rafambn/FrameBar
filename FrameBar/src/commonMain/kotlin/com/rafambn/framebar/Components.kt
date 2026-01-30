@@ -3,11 +3,13 @@ package com.rafambn.framebar
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
@@ -22,6 +24,11 @@ fun Pointer(
         color = Color.Yellow
     )
 ) {
+    val density = LocalDensity.current
+    val topOffsetPx = remember(pointer.topOffset, density) { with(density) { pointer.topOffset.toPx() } }
+    val widthPx = remember(pointer.size.width, density) { with(density) { pointer.size.width.toPx() } }
+    val heightPx = remember(pointer.size.height, density) { with(density) { pointer.size.height.toPx() } }
+
     Spacer(
         modifier
             .size(pointer.size.width, pointer.size.height + pointer.topOffset)
@@ -29,17 +36,14 @@ fun Pointer(
                 pointer.bitmap?.let { bitmap ->
                     drawImage(
                         image = bitmap,
-                        dstOffset = IntOffset(0, pointer.topOffset.toPx().toInt()),
-                        dstSize = IntSize(pointer.size.width.toPx().toInt(), pointer.size.height.toPx().toInt()) //TODO lots of conversion search way to improve
+                        dstOffset = IntOffset(0, topOffsetPx.toInt()),
+                        dstSize = IntSize(widthPx.toInt(), heightPx.toInt())
                     )
                 } ?: run {
                     drawRect(
                         color = pointer.color,
-                        topLeft = Offset(
-                            0F,
-                            pointer.topOffset.toPx()
-                        ),
-                        size = DpSize(pointer.size.width, pointer.size.height).toSize()
+                        topLeft = Offset(0F, topOffsetPx),
+                        size = Size(widthPx, heightPx)
                     )
                 }
             }
@@ -51,31 +55,48 @@ fun Markers(
     modifier: Modifier = Modifier,
     markersList: List<Marker>
 ) {
-    val offsets = mutableListOf<Dp>()
-    var tempOffset = 0.dp
-    markersList.forEach {
-        offsets.add(tempOffset)
-        tempOffset += it.size.width
+    val density = LocalDensity.current
+
+    val offsetsPx = remember(markersList, density) {
+        var tempOffset = 0f
+        markersList.map { marker ->
+            val current = tempOffset
+            tempOffset += with(density) { marker.size.width.toPx() }
+            current
+        }
     }
+
+    val sizesPx = remember(markersList, density) {
+        markersList.map { marker ->
+            with(density) {
+                Size(marker.size.width.toPx(), marker.size.height.toPx())
+            }
+        }
+    }
+
+    val topOffsetsPx = remember(markersList, density) {
+        markersList.map { with(density) { it.topOffset.toPx() } }
+    }
+
+    val totalWidth = remember(markersList) { markersList.sumOf { it.size.width.value.toDouble() }.dp }
+    val maxHeight = remember(markersList) { markersList.maxOf { it.size.height + it.topOffset } }
+
     Spacer(
         modifier
-            .size(
-                markersList.sumOf { it.size.width.value.toInt() }.dp,
-                markersList.maxOf { it.size.height + it.topOffset }
-            )
+            .size(totalWidth, maxHeight)
             .drawBehind {
                 markersList.forEachIndexed { index, marker ->
                     marker.bitmap?.let { bitmap ->
                         drawImage(
                             image = bitmap,
-                            dstOffset = IntOffset(offsets[index].toPx().toInt(), marker.topOffset.toPx().toInt()), //TODO lots of conversion search way to improve
-                            dstSize = IntSize(marker.size.width.toPx().toInt(), marker.size.height.toPx().toInt())
+                            dstOffset = IntOffset(offsetsPx[index].toInt(), topOffsetsPx[index].toInt()),
+                            dstSize = IntSize(sizesPx[index].width.toInt(), sizesPx[index].height.toInt())
                         )
                     } ?: run {
                         drawRect(
                             color = marker.color,
-                            topLeft = Offset(offsets[index].toPx(), marker.topOffset.toPx()),
-                            size = DpSize(marker.size.width, marker.size.height).toSize()
+                            topLeft = Offset(offsetsPx[index], topOffsetsPx[index]),
+                            size = sizesPx[index]
                         )
                     }
                 }
