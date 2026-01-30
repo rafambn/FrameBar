@@ -36,7 +36,7 @@ import kotlin.math.max
  * @param pointer Marker used as the draggable pointer visuals.
  * @param markers List of markers that compose the track visuals.
  * @param value Current value of the bar.
- * @param valueRange Optional range for the value mapping; when set, value is mapped to track width.
+ * @param valueRange Optional range for the value mapping; when set, the value is mapped to track width.
  * @param onValueChange Called when the value changes during drag.
  * @param onDragStarted Called when the drag gesture starts.
  * @param onDragStopped Called when the drag gesture ends.
@@ -174,6 +174,8 @@ private fun FrameBarImpl(
                         onValueChange(newIndex)
                         accumulatedDelta = 0f
                     }
+                    if (index == valueRange.start && accumulatedDelta > 0 || index == valueRange.endInclusive && accumulatedDelta < 0)
+                        accumulatedDelta = 0f
                 }
 
                 Movement.CONTINUOUS -> onValueChange(
