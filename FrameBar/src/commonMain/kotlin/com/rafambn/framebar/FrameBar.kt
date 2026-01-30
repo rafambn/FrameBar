@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -142,7 +141,7 @@ private fun FrameBarImpl(
     val density = LocalDensity.current
     val valueState by rememberUpdatedState(value.coerceIn(valueRange))
 
-    val offsets = remember(markers.toList(), density) {
+    val offsets = remember(markers, density) {
         mutableListOf<Float>().apply {
             clear()
             var tempOffset = 0F
@@ -154,25 +153,25 @@ private fun FrameBarImpl(
     }
 
     val pointerWidthPx = remember(pointer.hashCode()) { with(density) { pointer.size.width.toPx() } }
-    val trackWidthPx = remember(markers.toList()) {
+    val trackWidthPx = remember(markers) {
         with(density) {
             markers.sumOf { it.size.width.toPx().toInt() }
         } - if (coercedPointer == CoercePointer.COERCED) pointerWidthPx else 0F
     }
 
-    var acumulatedDelta by remember { mutableFloatStateOf(0f) }
+    var accumulatedDelta by remember { mutableFloatStateOf(0f) }
 
-    val draggableState = remember(markers.toList()) {
+    val draggableState = remember(markers) {
         DraggableState { delta ->
             when (movement) {
                 Movement.DISCRETE -> {
-                    acumulatedDelta += delta
-                    val offset = findOffsetTroughIndex(valueState, markers)
-                    val index = findIndexTroughOffset(offset - acumulatedDelta, offsets)
+                    accumulatedDelta += delta
+                    val offset = findOffsetThroughIndex(valueState, markers)
+                    val index = findIndexThroughOffset(offset - accumulatedDelta, offsets)
                     val newIndex = index.coerceIn(valueRange)
                     if (newIndex != valueState) {
                         onValueChange(newIndex)
-                        acumulatedDelta = 0f
+                        accumulatedDelta = 0f
                     }
                 }
 
@@ -253,7 +252,7 @@ private fun FrameBarImpl(
                     0F..trackWidthPx
                 ).toInt()
             } else
-                findOffsetTroughIndex(value, markers).dp.toPx().toInt()
+                findOffsetThroughIndex(value, markers).dp.toPx().toInt()
 
             markersPlaceable.placeRelative(
                 markersOffsetX - coercedValue,
@@ -267,20 +266,21 @@ private fun FrameBarImpl(
     }
 }
 
-private fun findIndexTroughOffset(offset: Float, listOffset: List<Float>): Float {
+private fun findIndexThroughOffset(offset: Float, listOffset: List<Float>): Float {
     val index = listOffset.indexOfLast { offset >= it }
     return if (index != -1) index.toFloat() else 0F
 }
 
-private fun findOffsetTroughIndex(selectedIndex: Float, markers: List<Marker>): Float {
-    var starOffset = 0F
+private fun findOffsetThroughIndex(selectedIndex: Float, markers: List<Marker>): Float {
+    var startOffset = 0F
     markers.forEachIndexed { index, marker ->
         if (selectedIndex == index.toFloat()) {
-            starOffset += marker.size.width.value / 2
-            return starOffset
-        } else starOffset += marker.size.width.value
+            startOffset += marker.size.width.value / 2
+            return startOffset
+        } else
+            startOffset += marker.size.width.value
     }
-    return starOffset
+    return startOffset
 }
 
 private fun pointerSelectionShift(pointerSelection: PointerSelection, halfPointerWidth: Int, pointerWidth: Int): Int {

@@ -16,10 +16,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
@@ -463,6 +467,75 @@ internal fun App() = AppTheme {
                     }
                 }
             }
+
+            // 12. Animated Markers
+            DemoSection(title = "12. Animated Markers - Changing Size & Color Every 1.5s") {
+                val baseColors = listOf(
+                    Color(0xFF1976D2), Color(0xFF1565C0), Color(0xFF0D47A1),
+                    Color(0xFF1E88E5), Color(0xFF2196F3), Color(0xFF42A5F5),
+                    Color(0xFF64B5F6), Color(0xFF90CAF9), Color(0xFFBBDEFB),
+                    Color(0xFFE3F2FD)
+                )
+                val animatedColors = listOf(
+                    Color(0xFFFF5252), Color(0xFFFF6E40), Color(0xFFFFAB40),
+                    Color(0xFFFDD835), Color(0xFFFBC02D), Color(0xFF8BC34A)
+                )
+                val animatedSizes = listOf(
+                    DpSize(20.dp, 30.dp),
+                    DpSize(32.dp, 40.dp),
+                    DpSize(40.dp, 50.dp),
+                    DpSize(28.dp, 35.dp),
+                    DpSize(35.dp, 45.dp)
+                )
+                val markers = remember { mutableStateOf(baseColors.map { color ->
+                    Marker(size = DpSize(32.dp, 40.dp), topOffset = 0.dp, color = color)
+                }) }
+                val animatedMarkerIndex = remember { mutableStateOf(0) }
+                val animationStep = remember { mutableStateOf(0) }
+                val value = remember { mutableStateOf(0F) }
+                val coroutineScope = rememberCoroutineScope()
+
+                LaunchedEffect(Unit) {
+                    coroutineScope.launch {
+                        while (true) {
+                            delay(1500)
+                            animatedMarkerIndex.value = (animatedMarkerIndex.value + 1) % baseColors.size
+                            animationStep.value = (animationStep.value + 1) % (animatedColors.size * animatedSizes.size)
+                            val colorIndex = animationStep.value % animatedColors.size
+                            val sizeIndex = (animationStep.value / animatedColors.size) % animatedSizes.size
+
+                            val newMarkers = markers.value.mapIndexed { index, marker ->
+                                if (index == animatedMarkerIndex.value) {
+                                    Marker(
+                                        size = animatedSizes[sizeIndex],
+                                        topOffset = 0.dp,
+                                        color = animatedColors[colorIndex]
+                                    )
+                                } else {
+                                    marker
+                                }
+                            }
+                            markers.value = newMarkers
+                        }
+                    }
+                }
+
+                FrameBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Gray)
+                        .padding(horizontal = 16.dp),
+                    pointerSelection = PointerSelection.CENTER,
+                    coercedPointer = CoercePointer.NOT_COERCED,
+                    pointer = Marker(size = DpSize(12.dp, 30.dp), topOffset = 30.dp, color = Color(0xFFFFD600)),
+                    markers = markers.value,
+                    value = value.value,
+                    onValueChange = { value.value = it }
+                )
+                Text("Value: ${((value.value * 10).roundToInt() / 10f)}", modifier = Modifier.padding(top = 8.dp))
+                Text("Animating marker at index: ${animatedMarkerIndex.value}", modifier = Modifier.padding(top = 4.dp))
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
