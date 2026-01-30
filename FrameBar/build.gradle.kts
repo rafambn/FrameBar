@@ -9,7 +9,7 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.33.0"
 }
 
-group = "io.github.rafambn"
+group = "com.rafambn"
 version = "1.0.0"
 
 kotlin {
@@ -63,7 +63,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.rafambn.framebar"
+    namespace = "com.rafambn"
     compileSdk = 36
 
     defaultConfig {
@@ -81,7 +81,7 @@ mavenPublishing {
 // Configure POM metadata for the published artifact
     pom {
         name.set("FrameBar")
-        description.set("A Kotlin Multiplatform library that implements a custom seekbar.")
+        description.set("A customizable Compose Multiplatform seekbar component for frame-based navigation. Features configurable markers, pointers, and support for both continuous and discrete positioning - ideal for media players, video editors, and timeline controls.")
         url.set("https://framebar.rafambn.com")
 
         licenses {
