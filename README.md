@@ -40,27 +40,27 @@ import com.rafambn.framebar.FrameBar
 import com.rafambn.framebar.Marker
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.DpSize
 
 @Composable
 fun MyVideoPlayer() {
     val currentPosition = remember { mutableStateOf(0f) }
-    
+
     // Create your markers
     val markers = listOf(
-        Marker(width = 10.dp, color = Color.Gray),
-        Marker(width = 10.dp, color = Color.Gray, topOffset = 50.dp),
-        Marker(width = 10.dp, color = Color.Gray),
+        Marker(size = DpSize(10.dp, 40.dp), topOffset = 0.dp, color = Color.Gray),
+        Marker(size = DpSize(10.dp, 40.dp), topOffset = 10.dp, color = Color.Gray),
+        Marker(size = DpSize(10.dp, 40.dp), topOffset = 0.dp, color = Color.Gray),
         // ... more markers
     )
-    
+
     // Create your pointer
     val pointer = Marker(
-        width = 10.dp,
-        height = 40.dp,
-        color = Color.Yellow,
-        topOffset = 5.dp
+        size = DpSize(10.dp, 40.dp),
+        topOffset = 5.dp,
+        color = Color.Yellow
     )
-    
+
     FrameBar(
         pointer = pointer,
         markers = markers,
@@ -96,18 +96,16 @@ FrameBar(
 ```kotlin
 // Colored marker
 val coloredMarker = Marker(
-    width = 15.dp,
-    height = 20.dp,
-    color = Color.Blue,
-    topOffset = 10.dp
+    size = DpSize(15.dp, 20.dp),
+    topOffset = 10.dp,
+    color = Color.Blue
 )
 
 // Image marker
 val imageMarker = Marker(
-    width = 20.dp,
-    height = 30.dp,
-    bitmap = myImageBitmap,
-    topOffset = 5.dp
+    size = DpSize(20.dp, 30.dp),
+    topOffset = 5.dp,
+    bitmap = myImageBitmap
 )
 ```
 
@@ -159,16 +157,18 @@ FrameBar(
 
 ```kotlin
 FrameBar(
+    pointer = pointer,
+    markers = markers,
     value = currentPosition.value,
     onValueChange = { position ->
         // Continuous updates during drag
         updatePosition(position)
     },
-    onValueChangeStarted = {
+    onDragStarted = {
         // User started dragging
         showPreview()
     },
-    onValueChangeFinished = {
+    onDragStopped = {
         // User finished dragging
         hidePreview()
         commitPosition()
