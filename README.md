@@ -103,7 +103,60 @@ FrameBar(
 )
 ```
 
+### Custom Value Range
+
+```kotlin
+FrameBar(
+    value = currentPosition.value,
+    valueRange = 0f..100f, // Map pixels to custom range
+    onValueChange = { normalizedValue ->
+        // Convert back to your application's values
+        val actualPosition = normalizedValue * totalDurationMs
+        seekTo(actualPosition)
+    }
+)
+```
+
+### Event Handling
+
+```kotlin
+FrameBar(
+    pointer = pointer,
+    markers = markers,
+    value = currentPosition.value,
+    onValueChange = { position ->
+        // Continuous updates during drag
+        updatePosition(position)
+    },
+    onDragStarted = {
+        // User started dragging
+        showPreview()
+    },
+    onDragStopped = {
+        // User finished dragging
+        hidePreview()
+        commitPosition()
+    }
+)
+```
+
 ### Customization
+
+Marker Configuration
+
+```kotlin
+val coloredMarker = Marker(
+    size = DpSize(15.dp, 20.dp),
+    topOffset = 10.dp,
+    color = Color.Blue
+)
+
+val imageMarker = Marker(
+    size = DpSize(20.dp, 30.dp),
+    topOffset = 5.dp,
+    bitmap = myImageBitmap
+)
+```
 
 Pointer selection modes:
 
@@ -111,7 +164,11 @@ Pointer selection modes:
 import com.rafambn.framebar.enums.PointerSelection
 
 FrameBar(
-    pointerSelection = PointerSelection.CENTER, // LEFT or RIGHT also available
+    pointerSelection = PointerSelection.LEFT,   // Left edge of pointer
+    // or
+    pointerSelection = PointerSelection.CENTER, // Center of pointer (default)
+    // or
+    pointerSelection = PointerSelection.RIGHT,  // Right edge of pointer
     // ... other parameters
 )
 ```
@@ -122,7 +179,9 @@ Pointer coercion mode:
 import com.rafambn.framebar.enums.CoercePointer
 
 FrameBar(
-    coercedPointer = CoercePointer.COERCED, // or NOT_COERCED
+    coercedPointer = CoercePointer.COERCED, // Pointer stays within bounds
+    // or
+    coercedPointer = CoercePointer.NOT_COERCED, // Default behavior
     // ... other parameters
 )
 ```
