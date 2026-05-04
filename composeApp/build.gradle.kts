@@ -6,14 +6,18 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     jvmToolchain(17)
 
-    androidTarget()
+    android {
+        namespace = "com.rafambn.framebarcomposeapp.shared"
+        compileSdk = 36
+        minSdk = 24
+    }
     jvm()
     js {
         browser()
@@ -55,8 +59,6 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.appcompat)
-            implementation(libs.androidx.activityCompose)
-            implementation(libs.compose.uitooling)
         }
 
         jvmMain.dependencies {
@@ -67,20 +69,6 @@ kotlin {
         iosMain.dependencies {
         }
 
-    }
-}
-
-android {
-    namespace = "com.rafambn.framebarcomposeapp"
-    compileSdk = 36
-
-    defaultConfig {
-        minSdk = 24
-        targetSdk = 36
-
-        applicationId = "com.rafambn.framebar"
-        versionCode = 1
-        versionName = "1.0.0"
     }
 }
 

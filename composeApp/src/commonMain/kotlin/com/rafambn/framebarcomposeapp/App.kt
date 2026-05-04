@@ -40,7 +40,7 @@ import framebar.composeapp.generated.resources.marker_icon
 import org.jetbrains.compose.resources.imageResource
 
 @Composable
-internal fun App() = AppTheme {
+fun App() = AppTheme {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier

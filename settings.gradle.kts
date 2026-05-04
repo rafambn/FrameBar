@@ -1,4 +1,5 @@
 rootProject.name = "FrameBar"
+include(":androidApp")
 include(":composeApp")
 include(":FrameBar")
 
