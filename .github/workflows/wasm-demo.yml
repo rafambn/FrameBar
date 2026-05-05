@@ -27,11 +27,11 @@ jobs:
       - name: Build WASM distribution
         run: |
           chmod +x ./gradlew
-          ./gradlew :composeApp:wasmJsBrowserDistribution
+          ./gradlew :DemoApp:webApp:wasmJsBrowserDistribution
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: composeApp/build/dist/wasmJs/productionExecutable
+          publish_dir: DemoApp/webApp/build/dist/wasmJs/productionExecutable
           cname: framebar.rafambn.com
