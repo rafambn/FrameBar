@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.rafambn"
-version = "1.0.0"
+version = "1.1.0"
 
 kotlin {
     jvmToolchain(17)
@@ -71,7 +71,7 @@ mavenPublishing {
     coordinates(
         groupId = "com.rafambn",
         artifactId = "FrameBar",
-        version = "1.0.0"
+        version = "1.1.0"
     )
 
 // Configure POM metadata for the published artifact
