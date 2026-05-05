@@ -1,6 +1,5 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -8,6 +7,10 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.compose.compiler)
+}
+
+compose.resources {
+    packageOfResClass = "framebar.composeapp.generated.resources"
 }
 
 kotlin {
@@ -21,15 +24,20 @@ kotlin {
     jvm()
     js {
         browser()
-        binaries.executable()
     }
     wasmJs {
         browser()
-        binaries.executable()
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "DemoAppShared"
+            isStatic = true
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -52,34 +60,14 @@ kotlin {
         wasmJsMain.get().dependsOn(webMain)
         jsMain.get().apply {
             dependsOn(webMain)
-            dependencies {
-                implementation(compose.html.core)
-            }
         }
 
         androidMain.dependencies {
             implementation(libs.androidx.appcompat)
         }
 
-        jvmMain.dependencies {
-            implementation(compose.desktop.common)
-            implementation(compose.desktop.currentOs)
-        }
-
         iosMain.dependencies {
         }
 
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.rafambn.framebar.desktopApp"
-            packageVersion = "1.0.0"
-        }
     }
 }

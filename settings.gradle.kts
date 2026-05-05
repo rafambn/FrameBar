@@ -1,7 +1,9 @@
 rootProject.name = "FrameBar"
-include(":androidApp")
-include(":composeApp")
 include(":FrameBar")
+include(":DemoApp:shared")
+include(":DemoApp:androidApp")
+include(":DemoApp:desktopApp")
+include(":DemoApp:webApp")
 
 pluginManagement {
     repositories {

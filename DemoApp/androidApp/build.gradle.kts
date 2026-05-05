@@ -21,7 +21,7 @@ extensions.configure<ApplicationExtension>("android") {
 }
 
 dependencies {
-    implementation(project(":composeApp"))
+    implementation(project(":DemoApp:shared"))
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.appcompat)
     implementation(libs.compose.uitooling)

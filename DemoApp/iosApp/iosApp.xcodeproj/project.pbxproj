@@ -153,7 +153,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "cd \"$SRCROOT/../..\"\n./gradlew :DemoApp:shared:embedAndSignAppleFrameworkForXcode\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -294,7 +294,7 @@
 				ENABLE_PREVIEWS = YES;
                 FRAMEWORK_SEARCH_PATHS = (
     	"${inherited}",
-    	"$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+    	"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
     );
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -310,7 +310,7 @@
                 OTHER_LDFLAGS = (
        	"${inherited}",
        	"-framework",
-       	ComposeApp,
+       	DemoAppShared,
        );
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.rafambn.templatelibrary.iosApp;
 				PRODUCT_NAME = "Template library with App";
@@ -331,7 +331,7 @@
 				ENABLE_PREVIEWS = YES;
                 FRAMEWORK_SEARCH_PATHS = (
     	"${inherited}",
-    	"$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+    	"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
     );
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -347,7 +347,7 @@
                 OTHER_LDFLAGS = (
        	"${inherited}",
        	"-framework",
-       	ComposeApp,
+       	DemoAppShared,
        );
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.rafambn.templatelibrary.iosApp;
 				PRODUCT_NAME = "Template library with App";
