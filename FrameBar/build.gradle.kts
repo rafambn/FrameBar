@@ -1,21 +1,26 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SourcesJar
 
 plugins {
     alias(libs.plugins.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
-    id("com.vanniktech.maven.publish") version "0.33.0"
+    id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
 group = "com.rafambn"
-version = "1.0.0"
+version = "1.1.0"
 
 kotlin {
     jvmToolchain(17)
 
-    androidTarget { publishLibraryVariants("release") }
+    android {
+        namespace = "com.rafambn"
+        compileSdk = 36
+        minSdk = 24
+    }
     jvm()
     js(IR) {
         browser {
@@ -62,20 +67,11 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.rafambn"
-    compileSdk = 36
-
-    defaultConfig {
-        minSdk = 24
-    }
-}
-
 mavenPublishing {
     coordinates(
         groupId = "com.rafambn",
         artifactId = "FrameBar",
-        version = "1.0.0"
+        version = "1.1.0"
     )
 
 // Configure POM metadata for the published artifact
@@ -111,8 +107,7 @@ mavenPublishing {
     configure(
         KotlinMultiplatform(
             javadocJar = JavadocJar.Empty(),
-            sourcesJar = true,
-            androidVariantsToPublish = listOf("release"),
+            sourcesJar = SourcesJar.Sources(),
         )
     )
 }
