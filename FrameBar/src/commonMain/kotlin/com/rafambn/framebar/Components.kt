@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import kotlin.math.roundToInt
 
 @Composable
 internal fun Pointer(
@@ -23,7 +24,10 @@ internal fun Pointer(
             .size(pointer.size)
             .drawBehind {
                 pointer.bitmap?.let { bitmap ->
-                    drawImage(image = bitmap)
+                    drawImage(
+                        image = bitmap,
+                        dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt())
+                    )
                 } ?: run {
                     drawRect(color = pointer.color)
                 }
@@ -86,5 +90,4 @@ fun Markers(
             }
     )
 }
-
 
